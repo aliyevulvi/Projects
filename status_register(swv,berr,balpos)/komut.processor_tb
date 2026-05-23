@@ -1,0 +1,4 @@
+vsim work.processor_tb
+add wave -r /*
+log -r /*
+run 200ns
