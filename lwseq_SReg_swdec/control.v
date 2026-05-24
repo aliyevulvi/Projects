@@ -1,0 +1,25 @@
+module control(in,regdest,alusrc,memtoreg,regwrite,memread,memwrite,branch,aluop1,aluop0, lwseq, swv, berr, balpos, signal_swdec, funct);
+input [5:0] in, funct;
+output regdest,alusrc,memtoreg,regwrite,memread,memwrite,branch,aluop1,aluop0, lwseq, swv, berr, balpos, signal_swdec;
+wire rformat,lw,sw,beq;
+wire is_swdec;
+assign is_swdec = in[5] & (~in[4]) & in[3] & in[2] & (~in[1]) & in[0];
+assign rformat=~|in;
+assign lw=in[5]& (~in[4])&(~in[3])&(~in[2])&in[1]&in[0];
+assign sw=in[5]& (~in[4])&in[3]&(~in[2])&in[1]&in[0];
+assign beq=~in[5]& (~in[4])&(~in[3])&in[2]&(~in[1])&(~in[0]);
+assign regdest=rformat;
+assign alusrc=lw|sw|swv|is_swdec;
+assign memtoreg=lw;
+assign regwrite=rformat|lw;
+assign memread=lw;
+assign memwrite=sw | is_swdec;
+assign branch=beq;
+assign aluop1=rformat;
+assign aluop0=beq;
+assign lwseq = (in == 6'b000000) && (funct == 6'h16);
+assign swv = (in == 6'b100111);
+assign berr = (in == 6'b011010);
+assign balpos = (in == 6'b011011);
+assign signal_swdec = is_swdec;
+endmodule
